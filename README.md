@@ -1,10 +1,10 @@
-# 🌡️ LM35 Temperature Sensor Interfacing with Microcontroller (ADC + Serial Plot)
+#  LM35 Temperature Sensor Interfacing with Microcontroller (ADC + Serial Plot)
 
 This project demonstrates how to interface the **LM35 analog temperature sensor** with a microcontroller (e.g., Arduino, ESP32, or STM32) using the **ADC (Analog-to-Digital Converter)** and visualize the **real-time temperature data** using a **serial plotter**.
 
 ---
 
-## 🚀 Features
+## Features
 
 - Reads analog temperature data from LM35 sensor
 - Converts ADC value to temperature in °C
@@ -13,7 +13,7 @@ This project demonstrates how to interface the **LM35 analog temperature sensor*
 
 ---
 
-## 🧰 Hardware Required
+##  Hardware components used
 
 - LM35 Temperature Sensor  
 - Microcontroller Board (Arduino UNO / ESP32 / STM32)  
@@ -23,7 +23,7 @@ This project demonstrates how to interface the **LM35 analog temperature sensor*
 
 ---
 
-## 🔌 Circuit Diagram
+##  Circuit Diagram
 
 | LM35 Pin | Connection           |
 |----------|----------------------|
@@ -33,7 +33,7 @@ This project demonstrates how to interface the **LM35 analog temperature sensor*
 
 ---
 
-## 📦 Files Included
+##  Files Included
 
 | File Name           | Description                            |
 |---------------------|----------------------------------------|
@@ -43,9 +43,9 @@ This project demonstrates how to interface the **LM35 analog temperature sensor*
 
 ---
 
-## 🧪 How to Use
+##  How to Use
 
-### ✅ For Arduino
+### For Arduino
 
 1. Open `LM35_Arduino.ino` in the Arduino IDE.
 2. Connect the LM35 to A0, 5V, and GND.
@@ -53,7 +53,7 @@ This project demonstrates how to interface the **LM35 analog temperature sensor*
 4. Upload the code.
 5. Open **Serial Plotter** (Baud: 9600) from Tools → Serial Plotter.
 
-### ✅ For ESP32
+### For ESP32
 
 1. Open `LM35_ESP32.ino` in Arduino IDE.
 2. Connect LM35 to any ADC-capable pin (e.g., GPIO34), 3.3V, and GND.
