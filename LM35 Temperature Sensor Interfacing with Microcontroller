@@ -1,1 +1,186 @@
-hi
+ LM35 ADC interfacing code for:
+
+1.  Arduino (UNO/MEGA) and ESP Family.
+
+
+2.  STM32 (STM32CubeMX: .ioc + main.c)
+
+
+3.  Texas Instruments C2000 (e.g., F28027, F28379D)
+
+
+
+
+---
+
+🔹 1. Arduino Code (UNO, Mega, Nano) and ESP Family 
+
+const int lm35Pin = A0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int adcValue = analogRead(lm35Pin);
+  float voltage = adcValue * (5.0 / 1024.0); // 10-bit ADC, 5V ref
+  float temperatureC = voltage * 100.0;      // 10mV per °C
+
+  Serial.println(temperatureC);
+  delay(500);
+}
+
+
+---
+
+🔹 2. STM32 Code (Using STM32CubeMX)
+
+* .ioc Settings *
+
+MCU: STM32F103C8T6 (or your variant)
+
+Enable ADC1 → IN0 (PA0)
+
+Enable USART2 for serial (PA2-TX, PA3-RX)
+
+SYS: Debug Serial Wire
+
+Clock: 72 MHz (HSE CLOCK - Crystal creramic clock- internal clock)
+
+ADC Settings:
+
+Resolution: 12-bit
+
+Continuous Mode: Enabled
+
+Scan Conversion: Disabled
+
+DMA: Optional
+
+
+USART Baud Rate: 9600 or 115200 ( Asynchronous mode )
+
+
+✅ main.c Code
+
+#include "main.h"
+#include "stdio.h"
+
+ADC_HandleTypeDef hadc1;
+UART_HandleTypeDef huart2;
+char buffer[50];
+
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_ADC1_Init(void);
+static void MX_USART2_UART_Init(void);
+
+int main(void) {
+  HAL_Init();
+  SystemClock_Config();
+  MX_GPIO_Init();
+  MX_ADC1_Init();
+  MX_USART2_UART_Init();
+
+  HAL_ADC_Start(&hadc1);
+
+  while (1) {
+    HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+    uint32_t adc_val = HAL_ADC_GetValue(&hadc1);
+    float voltage = adc_val * 3.3 / 4095.0;
+    float tempC = voltage * 100.0;
+
+    sprintf(buffer, "%.2f\n", tempC);
+    HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
+    HAL_Delay(500);
+  }
+}
+
+
+---
+
+🔹 3. TI C2000 Code (F28027 or F28379D)
+
+📁 Project Setup (in Code Composer Studio)
+
+Enable ADCINA0 (or any analog channel)
+
+Enable SCI for UART (SCI-A or B depending on chip)
+
+ADC: 12-bit, Vref = 3.3V
+
+
+✅ main.c Code (Baremetal / Driverlib Example)
+
+#include "F28x_Project.h"
+#include <stdio.h>
+
+void ConfigureADC(void);
+void ConfigureSCI(void);
+void SendString(char *msg);
+
+void main(void) {
+    InitSysCtrl();
+    InitGpio();
+
+    ConfigureADC();
+    ConfigureSCI();
+
+    while(1) {
+        AdcaRegs.ADCSOCFRC1.bit.SOC0 = 1; // Start conversion on ADCIN0
+        while(AdcaRegs.ADCINTFLG.bit.ADCINT1 == 0); // Wait
+        AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
+
+        uint16_t adcVal = AdcaResultRegs.ADCRESULT0;
+        float voltage = ((float)adcVal / 4095.0) * 3.3;
+        float temp = voltage * 100.0;
+
+        char buf[50];
+        sprintf(buf, "%.2f\r\n", temp);
+        SendString(buf);
+
+        DELAY_US(500000); // 500ms
+    }
+}
+
+void ConfigureADC() {
+    EALLOW;
+    AdcaRegs.ADCCTL2.bit.PRESCALE = 6;  // ADCCLK = SYSCLK/4
+    AdcSetMode(ADC_ADCA, ADC_RESOLUTION_12BIT, ADC_SIGNALMODE_SINGLE);
+    AdcaRegs.ADCSOC0CTL.bit.CHSEL = 0;  // ADCINA0
+    AdcaRegs.ADCSOC0CTL.bit.ACQPS = 14;
+    AdcaRegs.ADCINTSEL1N2.bit.INT1SEL = 0;
+    AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
+    AdcaRegs.ADCINTSOCSEL1.all = 0;
+    EDIS;
+}
+
+void ConfigureSCI() {
+    EALLOW;
+    GPIO_SetupPinMux(43, GPIO_MUX_CPU1, 1);  // SCITXDA
+    GPIO_SetupPinOptions(43, GPIO_OUTPUT, GPIO_PUSHPULL);
+    GPIO_SetupPinMux(42, GPIO_MUX_CPU1, 1);  // SCIRXDA
+    GPIO_SetupPinOptions(42, GPIO_INPUT, GPIO_PULLUP);
+
+    SciaRegs.SCICCR.all = 0x0007;
+    SciaRegs.SCICTL1.all = 0x0003;
+    SciaRegs.SCIHBAUD.all = 0x0000;
+    SciaRegs.SCILBAUD.all = 0x0027;  // 9600 baud @ 60 MHz
+    SciaRegs.SCICTL2.bit.TXINTENA = 1;
+    SciaRegs.SCICTL2.bit.RXBKINTENA = 1;
+    SciaRegs.SCICTL1.all = 0x0023;
+    EDIS;
+}
+
+void SendString(char *msg) {
+    while (*msg) {
+        while (SciaRegs.SCICTL2.bit.TXRDY == 0);
+        SciaRegs.SCITXBUF.all = *msg++;
+    }
+}
+
+
+---
+
+
+
