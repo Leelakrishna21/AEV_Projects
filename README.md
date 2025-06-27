@@ -62,7 +62,7 @@ This project demonstrates how to interface the **LM35 analog temperature sensor*
 
 ---
 
-## 📏 Temperature Conversion Formula
+##  Temperature Conversion Formula
 
 - **LM35 Output**: 10 mV per °C
 - **Arduino (10-bit ADC, 5V)**:
@@ -82,5 +82,6 @@ In Serial Plotter (real-time):
 ##  Author
 
 **Leela Krishna**  
-Passionate about Embedded Systems, AI & Real-world Projects 🚀
+Passionate about Embedded Systems,
+ AI & Real-world Projects .
 
