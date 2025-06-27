@@ -66,3 +66,21 @@ This project demonstrates how to interface the **LM35 analog temperature sensor*
 
 - **LM35 Output**: 10 mV per °C
 - **Arduino (10-bit ADC, 5V)**:
+
+Temperature (°C) = (ADC_Value * 5.0 * 100.0) / 1024.0
+
+**ESP32 (12-bit ADC, 3.3V)**:
+
+Temperature (°C) = (ADC_Value * 3.3 * 100.0) / 4095.0
+
+Output :
+
+In Serial Plotter (real-time):
+
+25.3 25.4 25.5 ...
+
+##  Author
+
+**Leela Krishna**  
+Passionate about Embedded Systems, AI & Real-world Projects 🚀
+
