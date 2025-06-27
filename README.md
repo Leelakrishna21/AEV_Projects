@@ -73,6 +73,66 @@ Temperature (°C) = (ADC_Value * 5.0 * 100.0) / 1024.0
 
 Temperature (°C) = (ADC_Value * 3.3 * 100.0) / 4095.0
 
+LM35 ADC Interfacing with Arduino Block Diagram
+
+[LM35 Sensor]
+   |
+   | Analog Voltage Output (10mV/°C)
+   |
+[Arduino Analog Pin (e.g., A1)]
+   |
+   | ADC Conversion (10-bit ADC, 0-5V range)
+   |
+[Arduino ADC Module]
+   |
+   | Digital Value (0-1023)
+   |
+[Arduino MCU]
+   |
+   | Process ADC value to temperature
+   |
+[Serial Monitor / Display]
+
+LM35 ADC Interfacing with STM32 Block Diagram
+
+[LM35 Sensor]
+   |
+   | Analog Voltage Output (10mV/°C)
+   |
+[STM32 Analog Input Pin (e.g., PA2, ADC Channel)]
+   |
+   | ADC Conversion (12-bit ADC, 0-3.3V range)
+   |
+[STM32 ADC Module]
+   |
+   | Digital Value (0-4095)
+   |
+[STM32 MCU]
+   |
+   | Process ADC value to temperature
+   |
+[LCD Display / UART Serial Output]
+
+LM35 ADC Interfacing with C2000 Block Diagram
+
+[LM35 Sensor]
+   |
+   | Analog Voltage Output (10mV/°C)
+   |
+[C2000 Analog Input Pin (ADC Channel)]
+   |
+   | ADC Conversion (Typically 12-bit ADC)
+   |
+[C2000 ADC Module]
+   |
+   | Digital Value
+   |
+[C2000 MCU]
+   |
+   | Process ADC value to temperature
+   |
+[Display / Communication Interface]
+
 Output :
 
 In Serial Plotter (real-time):
